@@ -19,7 +19,27 @@ btn6 = QPushButton("Шукати замітки по тегу")
 main_line = QHBoxLayout()
 line1 = QVBoxLayout()
 line2 = QVBoxLayout()
-
+btn1.setStyleSheet('''
+background-color: #5c96b5
+''') 
+btn2.setStyleSheet('''
+background-color: #5c96b5
+''') 
+btn3.setStyleSheet('''
+background-color: #5c96b5
+''') 
+window.setStyleSheet(''' 
+  background-color: #427196                   
+ ''') 
+btn4.setStyleSheet('''
+background-color: #5c96b5
+''') 
+btn5.setStyleSheet('''
+background-color: #5c96b5
+''') 
+btn6.setStyleSheet('''
+background-color: #5c96b5
+''') 
 line1.addWidget(text) 
 line2.addWidget(notes_list) 
 line2.addWidget(btn1) 
@@ -62,9 +82,37 @@ def add_note():
         "text": "", 
         "tags" : [], 
         }
+def add_tag(): 
+    note_name = notes_list.currentItem().text()
+    tag = lineText.text() 
+    notes[note_name]["tags"].append(tag) 
+    
+    writefile() 
 
-    notes_list.addItem(note_name)  
 
+def search_note_bytag():
+    tag = lineText.text() 
+    if(btn6.text()=="Search"):
+        fillered = {}
+        for key in notes: 
+            if tag in notes[key]['tags']:
+                fillered[key] = notes[key] 
+        btn6.setText("ВІдмінити пошук?") 
+
+    else: 
+        btn6.setText("Search")
+        notes_list.clear() 
+        notes_list.addItems(fillered) 
+        tags_list.clear() 
+        lineText.clear() 
+
+btn6.clicked.connect(search_note_bytag)
+
+def del_tag(): 
+    note_name = notes_list.currentItem().text() 
+    tag_name = tags_list.currentItem().text() 
+    notes[note_name]["tags"].remove(tag_name) 
+    
 with open("notes.json", "r", encoding="utf-8") as file: 
     notes = json.load(file)
 notes_list.addItems(notes)
@@ -74,3 +122,5 @@ btn3.clicked.connect(save_note)
 window.setLayout(main_line)
 window.show()
 app.exec_() 
+
+
