@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QWidget ,QApplication, QListWidget ,QTextEdit ,QPushButton ,QLineEdit ,QHBoxLayout ,QVBoxLayout, QInputDialog
+from PyQt5.QtWidgets import QWidget ,QApplication, QListWidget ,QTextEdit , QMessageBox, QPushButton ,QLineEdit ,QHBoxLayout ,QVBoxLayout, QInputDialog
  
 import json
 app = QApplication([]) 
@@ -24,7 +24,7 @@ background-color: #5c96b5
 ''') 
 btn2.setStyleSheet('''
 background-color: #5c96b5
-''') 
+''')  
 btn3.setStyleSheet('''
 background-color: #5c96b5
 ''') 
@@ -42,17 +42,22 @@ background-color: #5c96b5
 ''') 
 line1.addWidget(text) 
 line2.addWidget(notes_list) 
-line2.addWidget(btn1) 
-line2.addWidget(btn2) 
+ 
+h_line = QHBoxLayout()
+
+h_line.addWidget(btn1)
+h_line.addWidget(btn2) 
+
+line2.addLayout(h_line)
 line2.addWidget(btn3)
 line2.addWidget(tags_list)
 line2.addWidget(lineText)  
 
-line2.addWidget(btn1) 
-line2.addWidget(btn2) 
-line2.addWidget(btn3) 
-line2.addWidget(btn4) 
-line2.addWidget(btn5) 
+h_line2 = QHBoxLayout() 
+h_line2.addWidget(btn5) 
+h_line2.addWidget(btn4) 
+line2.addLayout(h_line2)
+
 line2.addWidget(btn6)
 
 
@@ -66,12 +71,16 @@ def writefile():
 def show_note():
     note_name = notes_list.currentItem.text()
     text.setText(notes[note_name]['text'])
-def save_note():
-    note_text = text.toPlainText() 
-    note_name = notes_list.currentItem().text()
-    notes[note_name]['text'] = note_text 
+def save_note(): 
+    try:
+        note_text = text.toPlainText() 
+        note_name = notes_list.currentItem().text()
+        notes[note_name]['text'] = note_text 
+        writefile() 
+    except:
+        msg = QMessageBox(window, text="Виберіть замітку") 
+        msg.show() 
 
-    writefile() 
 notes = {}
 
 def add_note():
@@ -112,10 +121,13 @@ def del_tag():
     note_name = notes_list.currentItem().text() 
     tag_name = tags_list.currentItem().text() 
     notes[note_name]["tags"].remove(tag_name) 
-    
-with open("notes.json", "r", encoding="utf-8") as file: 
-    notes = json.load(file)
-notes_list.addItems(notes)
+try:    
+    with open("notes.json", "r", encoding="utf-8") as file: 
+        notes = json.load(file)
+        notes_list.addItems(notes)
+
+except:
+    print("file not found")   
 
 btn1.clicked.connect(add_note)
 btn3.clicked.connect(save_note)
